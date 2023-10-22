@@ -3,6 +3,12 @@ plugins {
     id("me.champeau.jmh") version "0.7.1"
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
 group = "column.store"
 version = "0.0.1"
 
