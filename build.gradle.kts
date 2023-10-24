@@ -1,4 +1,5 @@
 plugins {
+    id("checkstyle")
     id("java")
     id("me.champeau.jmh") version "0.7.1"
 }
