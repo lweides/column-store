@@ -13,7 +13,7 @@ class BooleanFilterTest {
 
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
-    void isFilter(boolean value) {
+    void isFilter(final boolean value) {
         var is = Filter.whereBoolean(column).is(value);
         assertThat(is.value()).isEqualTo(value);
         assertThat(is.column()).isEqualTo(column);

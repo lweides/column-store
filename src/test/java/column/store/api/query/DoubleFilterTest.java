@@ -28,7 +28,7 @@ class DoubleFilterTest {
 
     @ParameterizedTest
     @ValueSource(doubles = { 3.14, 17.17 })
-    void greaterThanFilter(double lowerBound) {
+    void greaterThanFilter(final double lowerBound) {
         var greaterThan = Filter.whereDouble(column).isGreaterThan(lowerBound);
         assertThat(greaterThan.lowerBound()).isEqualTo(lowerBound);
         assertThat(greaterThan.column()).isEqualTo(column);
@@ -37,7 +37,7 @@ class DoubleFilterTest {
 
     @ParameterizedTest
     @ValueSource(doubles = { 3.14, 17.17 })
-    void lessThanFilter(double upperBound) {
+    void lessThanFilter(final double upperBound) {
         var lessThan = Filter.whereDouble(column).isLessThan(upperBound);
         assertThat(lessThan.upperBound()).isEqualTo(upperBound);
         assertThat(lessThan.column()).isEqualTo(column);

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.Arrays;
 import java.util.Locale;
 
 import static column.store.api.column.Column.Type.BOOLEAN;
@@ -19,7 +18,7 @@ class ColumnTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "someColumn", "YET_ANOTHER_COLUMN", "aVeRyWeIrDcOlUmN"})
-    void columnNamesAreLowercase(String name) {
+    void columnNamesAreLowercase(final String name) {
         var booleanColumn = Column.forBoolean(name);
         var doubleColumn = Column.forDouble(name);
         var idColumn = Column.forId(name);

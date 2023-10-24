@@ -14,11 +14,7 @@ public final class StringFilter extends BaseFilter {
     private final MatchType matchType;
     private final String value;
 
-    private StringFilter(
-        Column column,
-        MatchType matchType,
-        String value
-    ) {
+    private StringFilter(final Column column, final MatchType matchType, final String value) {
         super(column);
         this.matchType = matchType;
         this.value = value;
@@ -49,35 +45,35 @@ public final class StringFilter extends BaseFilter {
 
     public static final class Builder extends Filter.Builder {
 
-        Builder(StringColumn column) {
+        Builder(final StringColumn column) {
             super(column);
         }
 
         /**
          * @return a new {@link StringFilter}, which matches iff {@code record[column] == value}
          */
-        public StringFilter is(String value) {
+        public StringFilter is(final String value) {
             return new StringFilter(column, MatchType.IS, value.toLowerCase(Locale.ROOT));
         }
 
         /**
          * @return a new {@link StringFilter}, which matches iff {@code record[column].startsWith(value)}
          */
-        public StringFilter startsWith(String value) {
+        public StringFilter startsWith(final String value) {
             return new StringFilter(column, MatchType.STARTS_WITH, value.toLowerCase(Locale.ROOT));
         }
 
         /**
          * @return a new {@link StringFilter}, which matches iff {@code record[column].endsWith(value)}
          */
-        public StringFilter endsWith(String value) {
+        public StringFilter endsWith(final String value) {
             return new StringFilter(column, MatchType.ENDS_WITH, value.toLowerCase(Locale.ROOT));
         }
 
         /**
          * @return a new {@link StringFilter}, which matches iff {@code record[column].contains(value)}
          */
-        public StringFilter contains(String value) {
+        public StringFilter contains(final String value) {
             return new StringFilter(column, MatchType.CONTAINS, value.toLowerCase(Locale.ROOT));
         }
     }

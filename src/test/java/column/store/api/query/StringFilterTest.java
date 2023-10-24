@@ -15,7 +15,7 @@ class StringFilterTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "foo", "bar" })
-    void isFilter(String value) {
+    void isFilter(final String value) {
         var is = Filter.whereString(column).is(value);
         assertThat(is.value()).isEqualTo(value);
         assertThat(is.column()).isEqualTo(column);
@@ -24,7 +24,7 @@ class StringFilterTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "foo", "bar" })
-    void startsWithFilter(String value) {
+    void startsWithFilter(final String value) {
         var startsWith = Filter.whereString(column).startsWith(value);
         assertThat(startsWith.value()).isEqualTo(value);
         assertThat(startsWith.column()).isEqualTo(column);
@@ -33,7 +33,7 @@ class StringFilterTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "foo", "bar" })
-    void endsWithFilter(String value) {
+    void endsWithFilter(final String value) {
         var endsWith = Filter.whereString(column).endsWith(value);
         assertThat(endsWith.value()).isEqualTo(value);
         assertThat(endsWith.column()).isEqualTo(column);
@@ -42,7 +42,7 @@ class StringFilterTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "foo", "bar" })
-    void containsFilter(String value) {
+    void containsFilter(final String value) {
         var contains = Filter.whereString(column).contains(value);
         assertThat(contains.value()).isEqualTo(value);
         assertThat(contains.column()).isEqualTo(column);
@@ -51,7 +51,7 @@ class StringFilterTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "FoO", "HelLO WORLd" })
-    void stringsAreConvertedToLowercase(String mixedCase) {
+    void stringsAreConvertedToLowercase(final String mixedCase) {
         assertThat(Filter.whereString(column).is(mixedCase).value())
             .isEqualTo(mixedCase.toLowerCase(Locale.ROOT));
 

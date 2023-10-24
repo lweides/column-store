@@ -2,13 +2,13 @@ package column.store.api;
 
 import java.util.*;
 
-public class Utils {
+public final class Utils {
 
     private Utils() {
         // hidden utils constructor
     }
 
-    public static <T> List<Class<? extends T>> subclasses(Class<T> clazz) {
+    public static <T> List<Class<? extends T>> subclasses(final Class<T> clazz) {
         var allClasses = new ArrayList<Class<? extends T>>();
         var stack = new ArrayDeque<Class<?>>();
         stack.push(clazz);

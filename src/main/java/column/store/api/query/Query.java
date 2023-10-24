@@ -40,7 +40,7 @@ public interface Query {
     /**
      * @return a new {@link Query.Builder}, which selects the given {@code columns}.
      */
-    static Builder select(Column... columns) {
+    static Builder select(final Column... columns) {
         return new Builder(columns);
     }
 
@@ -49,14 +49,14 @@ public interface Query {
         private final Set<Column> columns = new HashSet<>();
         private final List<Filter> filters = new ArrayList<>();
 
-        private Builder(Column... columns) {
+        private Builder(final Column... columns) {
             Collections.addAll(this.columns, columns);
         }
 
         /**
          * Adds {@code filter} to filters of the {@link Query}.
          */
-        public Builder filter(Filter filter) {
+        public Builder filter(final Filter filter) {
             columns.add(filter.column());
             filters.add(filter);
             return this;

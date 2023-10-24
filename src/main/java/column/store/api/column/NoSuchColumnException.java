@@ -4,7 +4,7 @@ public class NoSuchColumnException extends RuntimeException {
 
     private final Column column;
 
-    public NoSuchColumnException(Column column) {
+    public NoSuchColumnException(final Column column) {
         super("Column " + column.name() + " of type " + column.type() + " not found");
         this.column = column;
     }

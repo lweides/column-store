@@ -6,7 +6,7 @@ abstract sealed class BaseFilter implements Filter permits BooleanFilter, Double
 
     protected final Column column;
 
-    BaseFilter(Column column) {
+    BaseFilter(final Column column) {
         this.column = column;
     }
 
