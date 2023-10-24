@@ -29,7 +29,7 @@ class LongFilterTest {
 
     @ParameterizedTest
     @ValueSource(longs = { 42L, 73L })
-    void greaterThanFilter(long lowerBound) {
+    void greaterThanFilter(final long lowerBound) {
         var greaterThan = Filter.whereLong(column).isGreaterThan(lowerBound);
         assertThat(greaterThan.lowerBound()).isEqualTo(lowerBound);
         assertThat(greaterThan.column()).isEqualTo(column);
@@ -38,7 +38,7 @@ class LongFilterTest {
 
     @ParameterizedTest
     @ValueSource(longs = { 42L, 73L })
-    void lessThanFilter(long upperBound) {
+    void lessThanFilter(final long upperBound) {
         var lessThan = Filter.whereLong(column).isLessThan(upperBound);
         assertThat(lessThan.upperBound()).isEqualTo(upperBound);
         assertThat(lessThan.column()).isEqualTo(column);

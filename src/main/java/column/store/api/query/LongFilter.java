@@ -12,7 +12,7 @@ public final class LongFilter extends BaseFilter {
     private final long lowerBound;
     private final long upperBound;
 
-    private LongFilter(Column column, MatchType matchType, long lowerBound, long upperBound) {
+    private LongFilter(final Column column, final MatchType matchType, final long lowerBound, final long upperBound) {
         super(column);
         this.matchType = matchType;
         this.lowerBound = lowerBound;
@@ -50,28 +50,28 @@ public final class LongFilter extends BaseFilter {
 
     public static final class Builder extends Filter.Builder {
 
-        Builder(LongColumn column) {
+        Builder(final LongColumn column) {
             super(column);
         }
 
         /**
          * @return a new {@link LongFilter}, which matches a record iff {@code record[column] < maxExclusive}.
          */
-        public LongFilter isLessThan(long maxExclusive) {
+        public LongFilter isLessThan(final long maxExclusive) {
             return new LongFilter(column, MatchType.LESS_THAN, Long.MIN_VALUE, maxExclusive);
         }
 
         /**
          * @return a new {@link LongFilter}, which matches a record iff {@code record[column] > minExclusive}.
          */
-        public LongFilter isGreaterThan(long minExclusive) {
+        public LongFilter isGreaterThan(final long minExclusive) {
             return new LongFilter(column, MatchType.GREATER_THAN, minExclusive, Long.MAX_VALUE);
         }
 
         /**
          * @return a new {@link LongFilter}, which matches a record iff {@code minInclusive <= record[column] < maxExclusive}.
          */
-        public LongFilter isBetween(long minInclusive, long maxExclusive) {
+        public LongFilter isBetween(final long minInclusive, final long maxExclusive) {
              checkArgument(minInclusive < maxExclusive, "minInclusive has to be less than maxExclusive");
             return new LongFilter(column, MatchType.BETWEEN, minInclusive, maxExclusive);
         }

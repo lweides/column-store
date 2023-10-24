@@ -41,35 +41,35 @@ public sealed interface Column permits BaseColumn {
     /**
      * @return a new {@link BooleanColumn}.
      */
-    static BooleanColumn forBoolean(String name) {
+    static BooleanColumn forBoolean(final String name) {
         return new BooleanColumn(name.toLowerCase(Locale.ROOT));
     }
 
     /**
      * @return a new {@link DoubleColumn}.
      */
-    static DoubleColumn forDouble(String name) {
+    static DoubleColumn forDouble(final String name) {
         return new DoubleColumn(name.toLowerCase(Locale.ROOT));
     }
 
     /**
      * @return a new {@link IdColumn}.
      */
-    static IdColumn forId(String name) {
+    static IdColumn forId(final String name) {
         return new IdColumn(name.toLowerCase(Locale.ROOT));
     }
 
     /**
      * @return a new {@link LongColumn}.
      */
-    static LongColumn forLong(String name) {
+    static LongColumn forLong(final String name) {
         return new LongColumn(name.toLowerCase(Locale.ROOT));
     }
 
     /**
      * @return a new {@link StringColumn}.
      */
-    static StringColumn forString(String name) {
+    static StringColumn forString(final String name) {
         return new StringColumn(name.toLowerCase(Locale.ROOT));
     }
 }

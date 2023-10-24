@@ -7,7 +7,7 @@ public final class BooleanFilter extends BaseFilter {
 
     private final boolean value;
 
-    private BooleanFilter(Column column, boolean value) {
+    private BooleanFilter(final Column column, final boolean value) {
         super(column);
         this.value = value;
     }
@@ -23,14 +23,14 @@ public final class BooleanFilter extends BaseFilter {
 
     public static final class Builder extends Filter.Builder {
 
-        Builder(BooleanColumn column) {
+        Builder(final BooleanColumn column) {
             super(column);
         }
 
         /**
          * @return a new {@link BooleanFilter}, which matches a record iff {@code record[column] == value}.
          */
-        BooleanFilter is(boolean value) {
+        BooleanFilter is(final boolean value) {
             return new BooleanFilter(column, value);
         }
     }

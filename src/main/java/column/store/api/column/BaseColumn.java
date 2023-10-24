@@ -7,7 +7,7 @@ abstract sealed class BaseColumn implements Column permits BooleanColumn, Double
     private final String name;
     private final Type type;
 
-    BaseColumn(String name, Type type) {
+    BaseColumn(final String name, final Type type) {
         checkArgument(!name.isBlank(), "Name must not be blank");
         this.name = name;
         this.type = type;

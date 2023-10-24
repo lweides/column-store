@@ -9,7 +9,7 @@ public final class IdFilter extends BaseFilter {
 
     private final byte[] id;
 
-    private IdFilter(Column column, byte[] id) {
+    private IdFilter(final Column column, final byte[] id) {
         super(column);
         this.id = id;
     }
@@ -25,14 +25,14 @@ public final class IdFilter extends BaseFilter {
 
     public static final class Builder extends Filter.Builder {
 
-        Builder(IdColumn column) {
+        Builder(final IdColumn column) {
             super(column);
         }
 
         /**
          * @return a new {@link BooleanFilter}, which matches a record iff {@code record[column] == id}.
          */
-        public IdFilter is(byte[] id) {
+        public IdFilter is(final byte[] id) {
             return new IdFilter(column, id);
         }
     }

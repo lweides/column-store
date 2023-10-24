@@ -21,7 +21,7 @@ class IdFilterTest {
 
     @ParameterizedTest
     @MethodSource("bytes")
-    void isFilter(byte[] id) {
+    void isFilter(final byte[] id) {
         var is = Filter.whereId(column).is(id);
         assertThat(is.id()).isEqualTo(id);
         assertThat(is.column()).isEqualTo(column);

@@ -1,7 +1,7 @@
 package column.store.api.column;
 
 public final class DoubleColumn extends BaseColumn {
-    DoubleColumn(String name) {
+    DoubleColumn(final String name) {
         super(name, Type.DOUBLE);
     }
 }
