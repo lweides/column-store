@@ -30,7 +30,8 @@ public final class BooleanFilter extends BaseFilter {
         /**
          * @return a new {@link BooleanFilter}, which matches a record iff {@code record[column] == value}.
          */
-        BooleanFilter is(final boolean value) {
+
+        public BooleanFilter is(final boolean value) {
             return new BooleanFilter(column, value);
         }
     }

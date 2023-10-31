@@ -1,6 +1,6 @@
 package column.store.api.read;
 
-public non-sealed interface StringColumnReader extends ColumnReader {
+public interface StringColumnReader extends ColumnReader {
 
     /**
      * Read the value of the {@link column.store.api.column.StringColumn} of the current record.

@@ -13,7 +13,7 @@ import column.store.api.column.Column;
  *     <li>{@link StringColumnWriter}</li>
  * </ul>
  */
-public sealed interface ColumnWriter permits BooleanColumnWriter, DoubleColumnWriter, IdColumnWriter, LongColumnWriter, StringColumnWriter {
+public interface ColumnWriter {
 
     /**
      * Writes {@code null} into the {@link Column} of the current record.
