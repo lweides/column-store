@@ -3,6 +3,8 @@ package column.store.api.read;
 import column.store.api.column.*;
 import column.store.api.query.Query;
 
+import java.io.IOException;
+
 public interface Reader extends AutoCloseable {
 
     /**
@@ -12,7 +14,7 @@ public interface Reader extends AutoCloseable {
      *
      * <p> Calling this method invalidates any previously issued queries.
      */
-    void query(Query query);
+    void query(Query query) throws IOException;
 
     /**
      * @return a {@link BooleanColumnReader}, which reads the values of the given {@link BooleanColumn}.
@@ -51,7 +53,7 @@ public interface Reader extends AutoCloseable {
      *
      * @return whether there exists a next record to be accessed.
      */
-    boolean hasNext();
+    boolean hasNext() throws IOException;
 
     /**
      * Advance this {@link Reader} to the next record.
@@ -62,12 +64,12 @@ public interface Reader extends AutoCloseable {
      *
      * @throws java.util.NoSuchElementException if no next record can be found.
      */
-    void next();
+    void next() throws IOException;
 
     /**
      * Releases any underlying resources.
      * Column readers may not be accessed after this method has been called.
      */
     @Override
-    void close();
+    void close() throws IOException;
 }

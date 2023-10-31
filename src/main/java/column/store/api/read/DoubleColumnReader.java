@@ -1,6 +1,6 @@
 package column.store.api.read;
 
-public non-sealed interface DoubleColumnReader extends ColumnReader {
+public interface DoubleColumnReader extends ColumnReader {
 
     /**
      * Read the value of the {@link column.store.api.column.DoubleColumn} of the current record.

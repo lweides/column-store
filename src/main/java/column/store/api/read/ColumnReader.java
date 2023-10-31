@@ -13,7 +13,7 @@ import column.store.api.column.Column;
  *     <li>{@link StringColumnReader}</li>
  * </ul>
  */
-public sealed interface ColumnReader permits BooleanColumnReader, DoubleColumnReader, IdColumnReader, LongColumnReader, StringColumnReader {
+public interface ColumnReader {
 
     /**
      * Whether the value of this {@link column.store.api.column.Column} of the current record is not {@code null}.

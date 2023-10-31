@@ -2,6 +2,8 @@ package column.store.api.write;
 
 import column.store.api.column.*;
 
+import java.io.IOException;
+
 public interface Writer extends AutoCloseable {
 
     /**
@@ -35,16 +37,16 @@ public interface Writer extends AutoCloseable {
      * <p> If a new {@link Column} is added while records are added, all previous record will have {@code null} for the
      * newly added {@link Column}.
      */
-    void next();
+    void next() throws IOException;
 
     /**
      * Flushes the currently in-memory records to disk.
      */
-    void flush();
+    void flush() throws IOException;
 
     /**
      * Flushes the remaining records and releases any underlying resources.
      */
     @Override
-    void close();
+    void close() throws IOException;
 }
