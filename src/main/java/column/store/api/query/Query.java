@@ -2,6 +2,7 @@ package column.store.api.query;
 
 import column.store.api.column.Column;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -16,6 +17,11 @@ import static column.store.util.Conditions.checkArgument;
  * At least one column has to be selected for a {@link Query} to be valid.
  */
 public interface Query {
+
+    /**
+     * @return the file path used in the {@link Query}.
+     */
+    Path filePath();
 
     /**
      * @return the {@link Filter}s used in the {@link Query}.
@@ -38,19 +44,26 @@ public interface Query {
     }
 
     /**
-     * @return a new {@link Query.Builder}, which selects the given {@code columns}.
+     * @return a new {@link Query.Builder}, which targets a source data file with the given {@code path}.
      */
-    static Builder select(final Column... columns) {
-        return new Builder(columns);
+    static Builder from(Path filePath) {
+        return new Builder(filePath);
     }
 
     class Builder {
 
+        private final Path filePath;
         private final Set<Column> columns = new HashSet<>();
         private final List<Filter> filters = new ArrayList<>();
 
-        private Builder(final Column... columns) {
+        private Builder(final Path filePath) {
+            this.filePath = filePath;
+        }
+
+
+        public Builder select(final Column... columns) {
             Collections.addAll(this.columns, columns);
+            return this;
         }
 
         /**
@@ -68,6 +81,11 @@ public interface Query {
         public Query allOf() {
             ensureAtLeastOneColumn();
             return new Query() {
+                @Override
+                public Path filePath() {
+                    return filePath;
+                }
+
                 @Override
                 public Iterable<Filter> filters() {
                     return filters;
@@ -91,6 +109,11 @@ public interface Query {
         public Query atLeastOne() {
             ensureAtLeastOneColumn();
             return new Query() {
+                @Override
+                public Path filePath() {
+                    return filePath;
+                }
+
                 @Override
                 public Iterable<Filter> filters() {
                     return filters;

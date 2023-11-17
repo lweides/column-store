@@ -18,6 +18,8 @@ repositories {
 }
 
 dependencies {
+    implementation("org.apache.commons:commons-csv:1.10.0")
+    implementation("org.apache.commons:commons-lang3:3.14.0")
     implementation("org.apache.parquet:parquet-common:1.13.0")
     implementation("org.apache.parquet:parquet-encoding:1.13.0")
     implementation("org.apache.parquet:parquet-column:1.13.0")
