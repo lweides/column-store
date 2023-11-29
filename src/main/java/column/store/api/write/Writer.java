@@ -4,7 +4,6 @@ import column.store.api.column.*;
 
 import java.io.IOException;
 
-import java.io.IOException;
 
 public interface Writer extends AutoCloseable {
 
