@@ -23,13 +23,7 @@ import static org.apache.parquet.hadoop.ParquetReader.builder;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.parquet.filter2.compat.FilterCompat;
@@ -65,14 +59,10 @@ public class ParquetReader implements Reader {
         var path = new Path(query.filePath().toUri());
         var builder = builder(readSupport, path);
 
-        if (query.filters().iterator().hasNext()) {
-            var filters = new ArrayList<FilterPredicate>();
-            query.filters().forEach(filter -> filters.add(convert(filter)));
-            switch (query.type()) {
-                case ALL_OF -> builder.withFilter(FilterCompat.get(and(filters)));
-                case AT_LEAST_ONE -> builder.withFilter(FilterCompat.get(or(filters)));
-                default -> throw new IllegalArgumentException("Unknown query type: " + query.type());
-            }
+        switch (query.type()) {
+            case ALL_OF -> builder.withFilter(and(query.filters()));
+            case AT_LEAST_ONE -> builder.withFilter(or(query.filters()));
+            default -> throw new IllegalArgumentException("Unsupported filter type: " + query.type());
         }
 
         parquetReader = builder.build();
@@ -188,20 +178,20 @@ public class ParquetReader implements Reader {
         return userDefined(FilterApi.binaryColumn(filter.column().name()), new StringPredicate(filter));
     }
 
-    private static FilterPredicate and(final List<FilterPredicate> filters) {
-        var current = filters.get(0);
-        for (int i = 1; i < filters.size(); i++) {
-            current = FilterApi.and(current, filters.get(i));
-        }
-        return current;
+    private static FilterCompat.Filter and(final Collection<Filter> filters) {
+        return filters.stream()
+                .map(ParquetReader::convert)
+                .reduce(FilterApi::and)
+                .map(FilterCompat::get)
+                .orElse(FilterCompat.NOOP);
     }
 
-    private static FilterPredicate or(final List<FilterPredicate> filters) {
-        var current = filters.get(0);
-        for (int i = 1; i < filters.size(); i++) {
-            current = FilterApi.or(current, filters.get(i));
-        }
-        return current;
+    private static FilterCompat.Filter or(final Collection<Filter> filters) {
+        return filters.stream()
+                .map(ParquetReader::convert)
+                .reduce(FilterApi::or)
+                .map(FilterCompat::get)
+                .orElse(FilterCompat.NOOP);
     }
 
     private static final class StringPredicate extends UserDefinedPredicate<Binary> implements Serializable {

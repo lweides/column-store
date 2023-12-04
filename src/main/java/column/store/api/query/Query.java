@@ -3,11 +3,7 @@ package column.store.api.query;
 import column.store.api.column.Column;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static column.store.util.Conditions.checkArgument;
 
@@ -26,7 +22,7 @@ public interface Query {
     /**
      * @return the {@link Filter}s used in the {@link Query}.
      */
-    Iterable<Filter> filters();
+    Collection<Filter> filters();
 
     /**
      * @return the columns returned by the {@link Query}.
@@ -87,7 +83,7 @@ public interface Query {
                 }
 
                 @Override
-                public Iterable<Filter> filters() {
+                public Collection<Filter> filters() {
                     return filters;
                 }
 
@@ -115,7 +111,7 @@ public interface Query {
                 }
 
                 @Override
-                public Iterable<Filter> filters() {
+                public Collection<Filter> filters() {
                     return filters;
                 }
 
