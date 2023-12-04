@@ -10,7 +10,6 @@ import column.store.api.query.Query;
 import column.store.api.query.StringFilter;
 import column.store.api.read.*;
 
-import static org.apache.parquet.filter2.predicate.FilterApi.and;
 import static org.apache.parquet.filter2.predicate.FilterApi.binaryColumn;
 import static org.apache.parquet.filter2.predicate.FilterApi.booleanColumn;
 import static org.apache.parquet.filter2.predicate.FilterApi.doubleColumn;
@@ -24,7 +23,6 @@ import static org.apache.parquet.hadoop.ParquetReader.builder;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +31,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.apache.hadoop.fs.Path;
 import org.apache.parquet.filter2.compat.FilterCompat;
 import org.apache.parquet.filter2.predicate.FilterApi;
 import org.apache.parquet.filter2.predicate.FilterPredicate;
@@ -42,17 +41,12 @@ import org.apache.parquet.io.api.Binary;
 
 public class ParquetReader implements Reader {
 
-    private final org.apache.hadoop.fs.Path path;
     private final Map<String, BaseReader> readers = new HashMap<>();
     private final ReadSupportImpl readSupport = new ReadSupportImpl(readers);
     private org.apache.parquet.hadoop.ParquetReader<Object> parquetReader;
 
     private boolean consumed = true;
     private boolean hasNext;
-
-    public ParquetReader(final Path path) {
-        this.path = new org.apache.hadoop.fs.Path(path.toUri());
-    }
 
     @Override
     public void query(final Query query) throws IOException {
@@ -68,6 +62,7 @@ public class ParquetReader implements Reader {
             case STRING -> new StringReader();
         }));
 
+        var path = new Path(query.filePath().toUri());
         var builder = builder(readSupport, path);
 
         if (query.filters().iterator().hasNext()) {
