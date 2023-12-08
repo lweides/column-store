@@ -8,7 +8,6 @@
     <property name="severity" value="error"/>
 
     <property name="fileExtensions" value="java, properties, xml"/>
-
     <!-- Excludes all 'module-info.java' files              -->
     <!-- See https://checkstyle.org/filefilters/index.html -->
     <module name="BeforeExecutionExclusionFileFilter">
@@ -21,6 +20,8 @@
                   default="checkstyle-suppressions.xml" />
         <property name="optional" value="true"/>
     </module>
+
+    <module name="SuppressWarningsFilter" />
 
     <!-- Checks that property files contain the same keys.         -->
     <!-- See https://checkstyle.org/checks/misc/translation.html -->
@@ -53,7 +54,7 @@
     </module>
 
     <module name="TreeWalker">
-
+        <module name="SuppressWarningsHolder" />
         <!-- Checks for Naming Conventions.                  -->
         <!-- See https://checkstyle.org/checks/naming/index.html -->
         <module name="ConstantName"/>
