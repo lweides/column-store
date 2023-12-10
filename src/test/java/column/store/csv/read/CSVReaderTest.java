@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import static column.store.api.query.Filter.*;
 import static org.assertj.core.api.Assertions.*;
@@ -70,5 +72,27 @@ public class CSVReaderTest {
 
         assertThat(tripDistanceReader.get()).isGreaterThan(10.0);
         assertThat(pickupTimeReader.get()).endsWith("00:27:12");
+    }
+
+    @Test
+    void canQueryMultipleTimes() throws IOException {
+        var query = queryBuilder.select(vendorId).allOf();
+        var vendorIdReader = csvReader.of(vendorId);
+
+        csvReader.query(query);
+
+        Queue<byte[]> resultRecords = new LinkedList<>();
+
+        while (csvReader.hasNext()) {
+            csvReader.next();
+            resultRecords.add(vendorIdReader.get());
+        }
+
+        csvReader.query(query);
+
+        while (csvReader.hasNext()) {
+            csvReader.next();
+            assertThat(vendorIdReader.get()).isEqualTo(resultRecords.poll());
+        }
     }
 }
