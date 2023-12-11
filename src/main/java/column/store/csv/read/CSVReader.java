@@ -64,6 +64,7 @@ public class CSVReader implements Reader {
         }
         numOfStoredRecords = 0;
         numOfReadRecord = 0;
+        offset = 0;
         if (isAllOf) {
             allOfQuery();
         } else {
