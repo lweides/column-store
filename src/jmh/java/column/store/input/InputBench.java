@@ -2,6 +2,8 @@ package column.store.input;
 
 import column.store.api.column.Column;
 import column.store.api.query.Query;
+import column.store.inmemory.InMemoryReader;
+
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 

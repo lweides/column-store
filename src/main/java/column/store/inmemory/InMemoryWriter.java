@@ -1,4 +1,4 @@
-package column.store.input;
+package column.store.inmemory;
 
 import column.store.api.column.*;
 import column.store.api.write.*;
@@ -16,14 +16,12 @@ import java.util.Map;
 
 import static column.store.util.Conditions.checkState;
 
-/**
- * Creates files for {@link InMemoryReader}. See {@link CreateInput#main(String[])}.
- */
 public class InMemoryWriter implements Writer {
 
     private final Path root;
     private final Map<Column, ColumnWriter> writers;
     private final Map<Column, FileChannel> channels;
+
     public InMemoryWriter(final Path root) {
         this.root = root;
         this.writers = new HashMap<>();
