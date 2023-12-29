@@ -1,6 +1,9 @@
 package column.store.input;
 
 import column.store.api.column.Column;
+import column.store.inmemory.InMemoryReader;
+import column.store.inmemory.InMemoryWriter;
+
 import com.devskiller.jfairy.Fairy;
 
 import java.io.IOException;
@@ -11,7 +14,7 @@ import java.nio.file.Path;
 import java.util.Random;
 
 /**
- * Creation of a file for {@link column.store.input.InMemoryReader}.
+ * Creation of a file for {@link InMemoryReader}.
  */
 @SuppressWarnings("checkstyle:MagicNumber")
 

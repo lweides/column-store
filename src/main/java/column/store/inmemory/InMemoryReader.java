@@ -1,4 +1,4 @@
-package column.store.input;
+package column.store.inmemory;
 
 import column.store.api.column.*;
 import column.store.api.query.Query;
