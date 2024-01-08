@@ -3,6 +3,7 @@ package column.store.parquet.write;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.function.UnaryOperator;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -29,10 +30,14 @@ public class ParquetWriter implements Writer  {
   private final org.apache.parquet.hadoop.ParquetWriter<Object> writer;
   private final BaseWriter[] columnWriters;
 
-  public ParquetWriter(final Path path, final Column... columns) throws IOException {
+  public ParquetWriter(final Path path, final UnaryOperator<BuilderImpl> config, final Column... columns) throws IOException {
     this.columnWriters = new BaseWriter[columns.length];
     fillColumnWriters(columns);
-    this.writer = new BuilderImpl(path, columnWriters).build();
+    this.writer = config.apply(new BuilderImpl(path, columnWriters)).build();
+  }
+
+  public ParquetWriter(final Path path, final Column... columns) throws IOException {
+    this(path, UnaryOperator.identity(), columns);
   }
 
   private void fillColumnWriters(final Column[] columns) {
@@ -108,7 +113,7 @@ public class ParquetWriter implements Writer  {
     writer.close();
   }
 
-  private static final class BuilderImpl extends Builder<Object, BuilderImpl> {
+  public static final class BuilderImpl extends Builder<Object, BuilderImpl> {
 
     private final BaseWriter[] columnWriters;
 

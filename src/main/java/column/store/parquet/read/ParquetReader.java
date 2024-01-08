@@ -24,6 +24,7 @@ import static org.apache.parquet.hadoop.ParquetReader.builder;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.UnaryOperator;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.parquet.filter2.compat.FilterCompat;
@@ -37,12 +38,17 @@ public class ParquetReader implements Reader {
 
     private final Map<String, BaseReader> readers = new HashMap<>();
     private final ReadSupportImpl readSupport = new ReadSupportImpl(readers);
+    private final UnaryOperator<org.apache.parquet.hadoop.ParquetReader.Builder<Object>> config;
     private org.apache.parquet.hadoop.ParquetReader<Object> parquetReader;
 
     private boolean consumed = true;
     private boolean hasNext;
 
-    @Override
+  public ParquetReader(final UnaryOperator<org.apache.parquet.hadoop.ParquetReader.Builder<Object>> config) {
+    this.config = config;
+  }
+
+  @Override
     public void query(final Query query) throws IOException {
         // reset from a previous query
         readers.clear();
@@ -57,7 +63,7 @@ public class ParquetReader implements Reader {
         }));
 
         var path = new Path(query.filePath().toUri());
-        var builder = builder(readSupport, path);
+        var builder = config.apply(builder(readSupport, path));
 
         switch (query.type()) {
             case ALL_OF -> builder.withFilter(and(query.filters()));
