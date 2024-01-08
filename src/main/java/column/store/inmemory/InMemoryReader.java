@@ -9,9 +9,12 @@ import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -43,7 +46,7 @@ public class InMemoryReader implements Reader {
     public BooleanByteReader of(final BooleanColumn column) {
         return (BooleanByteReader) readers.computeIfAbsent(column, col -> {
             var bytes = readAllBytesOf(column);
-            return new BooleanByteReader(bytes);
+            return new BooleanByteReader(column, bytes);
         });
     }
 
@@ -51,7 +54,7 @@ public class InMemoryReader implements Reader {
     public DoubleByteReader of(final DoubleColumn column) {
         return (DoubleByteReader) readers.computeIfAbsent(column, col -> {
             var bytes = readAllBytesOf(column);
-            return new DoubleByteReader(bytes);
+            return new DoubleByteReader(column, bytes);
         });
     }
 
@@ -59,7 +62,7 @@ public class InMemoryReader implements Reader {
     public IdByteReader of(final IdColumn column) {
         return (IdByteReader) readers.computeIfAbsent(column, col -> {
             var bytes = readAllBytesOf(column);
-            return new IdByteReader(bytes);
+            return new IdByteReader(column, bytes);
         });
     }
 
@@ -67,7 +70,7 @@ public class InMemoryReader implements Reader {
     public LongByteReader of(final LongColumn column) {
         return (LongByteReader) readers.computeIfAbsent(column, col -> {
             var bytes = readAllBytesOf(column);
-            return new LongByteReader(bytes);
+            return new LongByteReader(column, bytes);
         });
     }
 
@@ -75,7 +78,7 @@ public class InMemoryReader implements Reader {
     public StringByteReader of(final StringColumn column) {
         return (StringByteReader) readers.computeIfAbsent(column, col -> {
             var bytes = readAllBytesOf(column);
-            return new StringByteReader(bytes);
+            return new StringByteReader(column, bytes);
         });
     }
 
@@ -90,11 +93,17 @@ public class InMemoryReader implements Reader {
 
     private abstract static class ByteReader implements ColumnReader {
 
+        private final Column column;
         protected final byte[] bytes;
         private int index = -1;
 
-        private ByteReader(final byte[] bytes) {
+        private ByteReader(final Column column, final byte[] bytes) {
+            this.column = column;
             this.bytes = bytes;
+        }
+
+        public Column column() {
+            return column;
         }
 
         public void reset() {
@@ -136,8 +145,8 @@ public class InMemoryReader implements Reader {
 
     public static final class BooleanByteReader extends ByteReader implements BooleanColumnReader {
 
-        private BooleanByteReader(final byte[] bytes) {
-            super(bytes);
+        private BooleanByteReader(final BooleanColumn column, final byte[] bytes) {
+            super(column, bytes);
         }
 
         @Override
@@ -155,8 +164,8 @@ public class InMemoryReader implements Reader {
 
         private final ByteBuffer buffer = ByteBuffer.wrap(new byte[Double.BYTES]);
 
-        private DoubleByteReader(final byte[] bytes) {
-            super(bytes);
+        private DoubleByteReader(final DoubleColumn column, final byte[] bytes) {
+            super(column, bytes);
         }
 
         @Override
@@ -174,8 +183,8 @@ public class InMemoryReader implements Reader {
 
         private final ByteBuffer buffer = ByteBuffer.wrap(new byte[Integer.BYTES]);
 
-        private IdByteReader(final byte[] bytes) {
-            super(bytes);
+        private IdByteReader(final IdColumn column, final byte[] bytes) {
+            super(column, bytes);
         }
 
         @Override
@@ -196,8 +205,8 @@ public class InMemoryReader implements Reader {
 
         private final ByteBuffer buffer = ByteBuffer.wrap(new byte[Long.BYTES]);
 
-        private LongByteReader(final byte[] bytes) {
-            super(bytes);
+        private LongByteReader(final LongColumn column, final byte[] bytes) {
+            super(column, bytes);
         }
 
         @Override
@@ -215,8 +224,8 @@ public class InMemoryReader implements Reader {
 
         private final ByteBuffer buffer = ByteBuffer.wrap(new byte[Integer.BYTES]);
 
-        private StringByteReader(final byte[] bytes) {
-            super(bytes);
+        private StringByteReader(final StringColumn column, final byte[] bytes) {
+            super(column, bytes);
         }
 
         @Override
@@ -270,5 +279,29 @@ public class InMemoryReader implements Reader {
         readers.values().forEach(ByteReader::reset);
         consumed = true;
         hasNext = false;
+    }
+
+    public List<Column> columns() {
+        var columns = new ArrayList<Column>();
+        for (var type : Column.Type.values()) {
+            try (var columnsOfType = Files.newDirectoryStream(root.resolve(type.name()))) {
+                columnsOfType.forEach(path -> columns.add(column(type, path.getFileName().toString())));
+            } catch (NoSuchFileException e) {
+                // no columns for this type
+            } catch (IOException e) {
+              throw new UncheckedIOException(e);
+            }
+        }
+        return columns;
+    }
+
+    private Column column(final Column.Type type, final String name) {
+        return switch (type) {
+          case BOOLEAN -> Column.forBoolean(name);
+          case DOUBLE -> Column.forDouble(name);
+          case ID -> Column.forId(name);
+          case LONG -> Column.forLong(name);
+          case STRING -> Column.forString(name);
+        };
     }
 }
