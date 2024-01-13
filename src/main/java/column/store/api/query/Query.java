@@ -30,6 +30,11 @@ public interface Query {
     Iterable<Column> columns();
 
     /**
+     * @return {@code true} if all columns should be selected. {@code false} otherwise.
+     */
+    boolean selectAll();
+
+    /**
      * @return the {@link QueryType} of the {@link Query}.
      */
     QueryType type();
@@ -51,6 +56,7 @@ public interface Query {
         private final Path filePath;
         private final Set<Column> columns = new HashSet<>();
         private final List<Filter> filters = new ArrayList<>();
+        private boolean shouldSelectAll;
 
         private Builder(final Path filePath) {
             this.filePath = filePath;
@@ -59,6 +65,11 @@ public interface Query {
 
         public Builder select(final Column... columns) {
             Collections.addAll(this.columns, columns);
+            return this;
+        }
+
+        public Builder selectAll() {
+            this.shouldSelectAll = true;
             return this;
         }
 
@@ -93,6 +104,11 @@ public interface Query {
                 }
 
                 @Override
+                public boolean selectAll() {
+                    return shouldSelectAll;
+                }
+
+                @Override
                 public QueryType type() {
                     return QueryType.ALL_OF;
                 }
@@ -121,6 +137,11 @@ public interface Query {
                 }
 
                 @Override
+                public boolean selectAll() {
+                    return shouldSelectAll;
+                }
+
+                @Override
                 public QueryType type() {
                     return QueryType.AT_LEAST_ONE;
                 }
@@ -128,7 +149,7 @@ public interface Query {
         }
 
         private void ensureAtLeastOneColumn() {
-            checkArgument(!columns.isEmpty(), "At least one column has to be selected");
+            checkArgument(!columns.isEmpty() || shouldSelectAll, "At least one column has to be selected");
         }
     }
 }
