@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.function.UnaryOperator;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.parquet.hadoop.ParquetWriter.Builder;
 
 import column.store.api.column.BooleanColumn;
@@ -22,8 +21,7 @@ import column.store.api.write.IdColumnWriter;
 import column.store.api.write.LongColumnWriter;
 import column.store.api.write.StringColumnWriter;
 import column.store.api.write.Writer;
-
-import com.globalmentor.apache.hadoop.fs.BareLocalFileSystem;
+import column.store.parquet.ParquetUtils;
 
 public class ParquetWriter implements Writer  {
 
@@ -120,12 +118,9 @@ public class ParquetWriter implements Writer  {
     private BuilderImpl(final Path path, final BaseWriter[] columnWriters) {
       super(new org.apache.hadoop.fs.Path(path.toAbsolutePath().toUri()));
       this.columnWriters = columnWriters;
-      if (isWindows()) {
-        var conf = new Configuration();
-        // workaround for windows, as hadoop does not work on windows fs
-        conf.setClass("fs.file.impl", BareLocalFileSystem.class, FileSystem.class);
-        withConf(conf);
-      }
+      var conf = new Configuration();
+      ParquetUtils.patchConfigForWindows(conf);
+      withConf(conf);
     }
 
     @Override
@@ -136,10 +131,6 @@ public class ParquetWriter implements Writer  {
     @Override
     protected WriteSupportImpl getWriteSupport(final Configuration conf) {
       return new WriteSupportImpl(columnWriters);
-    }
-
-    private static boolean isWindows() {
-      return System.getProperty("os.name").startsWith("Windows");
     }
   }
 }
