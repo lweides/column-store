@@ -2,6 +2,7 @@ package column.store.parquet.write;
 
 import static column.store.util.Conditions.checkState;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
@@ -9,7 +10,7 @@ import org.apache.parquet.hadoop.api.WriteSupport;
 import org.apache.parquet.io.api.RecordConsumer;
 import org.apache.parquet.schema.MessageTypeParser;
 
-import column.store.api.column.Column;
+import column.store.parquet.ParquetUtils;
 
 class WriteSupportImpl extends WriteSupport<Object> {
 
@@ -22,18 +23,8 @@ class WriteSupportImpl extends WriteSupport<Object> {
 
   @Override
   public WriteContext init(final Configuration configuration) {
-    var sb = new StringBuilder("message record {");
-    for (var columnWriter : columnWriters) {
-      sb
-              .append("optional ")
-              .append(ofColumn(columnWriter.column()))
-              .append(" ")
-              .append(columnWriter.column().name())
-              .append(";");
-    }
-    sb.append("}");
-
-    return new WriteContext(MessageTypeParser.parseMessageType(sb.toString()), Map.of());
+    var schema = ParquetUtils.schemaFrom(Arrays.stream(columnWriters).map(BaseWriter::column));
+    return new WriteContext(MessageTypeParser.parseMessageType(schema), Map.of());
   }
 
   @Override
@@ -50,14 +41,5 @@ class WriteSupportImpl extends WriteSupport<Object> {
       column.accept(recordConsumer);
     }
     recordConsumer.endMessage();
-  }
-
-  private static String ofColumn(final Column column) {
-    return switch (column.type()) {
-      case BOOLEAN -> "boolean";
-      case DOUBLE -> "double";
-      case ID, STRING -> "binary";
-      case LONG -> "int64";
-    };
   }
 }

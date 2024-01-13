@@ -1,15 +1,5 @@
 package column.store.parquet.read;
 
-import column.store.api.column.*;
-import column.store.api.query.BooleanFilter;
-import column.store.api.query.DoubleFilter;
-import column.store.api.query.Filter;
-import column.store.api.query.IdFilter;
-import column.store.api.query.LongFilter;
-import column.store.api.query.Query;
-import column.store.api.query.StringFilter;
-import column.store.api.read.*;
-
 import static org.apache.parquet.filter2.predicate.FilterApi.binaryColumn;
 import static org.apache.parquet.filter2.predicate.FilterApi.booleanColumn;
 import static org.apache.parquet.filter2.predicate.FilterApi.doubleColumn;
@@ -23,16 +13,45 @@ import static org.apache.parquet.hadoop.ParquetReader.builder;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.UnaryOperator;
+import java.util.stream.StreamSupport;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.parquet.filter2.compat.FilterCompat;
 import org.apache.parquet.filter2.predicate.FilterApi;
 import org.apache.parquet.filter2.predicate.FilterPredicate;
 import org.apache.parquet.filter2.predicate.Statistics;
 import org.apache.parquet.filter2.predicate.UserDefinedPredicate;
+import org.apache.parquet.hadoop.api.ReadSupport;
 import org.apache.parquet.io.api.Binary;
+
+import column.store.api.column.BooleanColumn;
+import column.store.api.column.DoubleColumn;
+import column.store.api.column.IdColumn;
+import column.store.api.column.LongColumn;
+import column.store.api.column.NoSuchColumnException;
+import column.store.api.column.StringColumn;
+import column.store.api.query.BooleanFilter;
+import column.store.api.query.DoubleFilter;
+import column.store.api.query.Filter;
+import column.store.api.query.IdFilter;
+import column.store.api.query.LongFilter;
+import column.store.api.query.Query;
+import column.store.api.query.StringFilter;
+import column.store.api.read.BooleanColumnReader;
+import column.store.api.read.DoubleColumnReader;
+import column.store.api.read.IdColumnReader;
+import column.store.api.read.LongColumnReader;
+import column.store.api.read.Reader;
+import column.store.api.read.StringColumnReader;
+import column.store.parquet.ParquetUtils;
 
 public class ParquetReader implements Reader {
 
@@ -64,6 +83,15 @@ public class ParquetReader implements Reader {
 
         var path = new Path(query.filePath().toUri());
         var builder = config.apply(builder(readSupport, path));
+
+        var conf = new Configuration();
+        ParquetUtils.patchConfigForWindows(conf);
+
+        // only read columns from query
+        var schema = ParquetUtils.schemaFrom(StreamSupport.stream(query.columns().spliterator(), false));
+        conf.set(ReadSupport.PARQUET_READ_SCHEMA, schema);
+
+        builder.withConf(conf);
 
         switch (query.type()) {
             case ALL_OF -> builder.withFilter(and(query.filters()));
