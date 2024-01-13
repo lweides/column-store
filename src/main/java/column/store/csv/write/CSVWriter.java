@@ -16,14 +16,32 @@ public class CSVWriter implements Writer {
     private final Map<String, Integer> headers;
     private String[] currentRecord;
     private final Path csvFilePath;
+    private final int maxInMemoryRecords = 500_000;
 
-    public CSVWriter(final Path csvFilePath) throws IOException {
-        this.csvFilePath = csvFilePath;
+    public CSVWriter(final Path csvDestPath, final List<Column> columns) throws IOException {
+        this.csvFilePath = csvDestPath;
 
         recordsToWrite = new ArrayList<>();
-        headers = new HashMap<>();
-        setUpWriter(csvFilePath);
+        headers = new LinkedHashMap<>();
+        setUpWriter(columns);
+        initCsvFile();
     }
+
+    public CSVWriter(final Path existingCsv) throws IOException {
+        this.csvFilePath = existingCsv;
+
+        recordsToWrite = new ArrayList<>();
+        headers = new LinkedHashMap<>();
+        setUpWriter(existingCsv);
+    }
+
+    private void setUpWriter(final List<Column> columns) throws IOException {
+        for (int i = 0; i < columns.size(); i++) {
+            headers.put(columns.get(i).name().toLowerCase(Locale.ROOT), i);
+        }
+        initNewRecord();
+    }
+
 
     private void setUpWriter(final Path csvFilePath) throws IOException {
         String[] headerValues = new BufferedReader(new FileReader(csvFilePath.toString())).readLine().split(",");
@@ -33,9 +51,26 @@ public class CSVWriter implements Writer {
         initNewRecord();
     }
 
+    private void initCsvFile() throws IOException {
+        try (FileWriter wr = new FileWriter(csvFilePath.toString(), false)) {
+            wr.write(String.join(",", headers.keySet()));
+        }
+    }
+
     private void initNewRecord() {
         currentRecord = new String[headers.size()];
         Arrays.fill(currentRecord, "");
+    }
+
+    private String prepareStringForWriting(final String value) {
+        return "\"" +
+                value.replace("\"", "'")
+                        .replace("\b", "\\b")
+                        .replace("\f", "\\f")
+                        .replace("\n", "\\n")
+                        .replace("\r", "\\r")
+                        .replace("\t", "\\t") +
+                "\"";
     }
 
     public void writeNull(final String columnName) {
@@ -89,7 +124,7 @@ public class CSVWriter implements Writer {
         return new IdColumnWriter() {
             @Override
             public void write(final byte[] value) {
-                currentRecord[headers.get(column.name())] = new String(value, StandardCharsets.UTF_8);
+                currentRecord[headers.get(column.name())] = prepareStringForWriting(new String(value, StandardCharsets.UTF_8));
             }
 
             @Override
@@ -123,7 +158,7 @@ public class CSVWriter implements Writer {
         return new StringColumnWriter() {
             @Override
             public void write(final String value) {
-                currentRecord[headers.get(column.name())] = value;
+                currentRecord[headers.get(column.name())] = prepareStringForWriting(value);
             }
 
             @Override
@@ -134,9 +169,13 @@ public class CSVWriter implements Writer {
     }
 
     @Override
-    public void next() {
+    public void next() throws IOException {
         recordsToWrite.add(currentRecord);
         initNewRecord();
+
+        if (recordsToWrite.size() >= maxInMemoryRecords) {
+            flush();
+        }
     }
 
     @Override
@@ -153,7 +192,9 @@ public class CSVWriter implements Writer {
     }
 
     @Override
-    public void close() {
-
+    public void close() throws IOException {
+        if (!recordsToWrite.isEmpty()) {
+            flush();
+        }
     }
 }
