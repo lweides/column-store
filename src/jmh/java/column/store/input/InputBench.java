@@ -41,8 +41,8 @@ public class InputBench {
         }
     }
 
-    @Benchmark
-    @BenchmarkMode(Mode.Throughput)
+//    @Benchmark
+//    @BenchmarkMode(Mode.Throughput)
     public void readRecords(final Blackhole blackhole, final BenchState state) {
         state.reader.reset();
         while (state.reader.hasNext()) {
