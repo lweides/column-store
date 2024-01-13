@@ -19,6 +19,7 @@ public class CSVFile {
         this.csvFormat = CSVFormat.DEFAULT.builder()
                 .setHeader(header)
                 .setSkipHeaderRecord(true)
+                .setQuote('"')
                 .build();
     }
 

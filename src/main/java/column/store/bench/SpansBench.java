@@ -51,7 +51,7 @@ public final class SpansBench {
     var stringReaders = stringReaders(byType, reader);
 
     var writer = parquetWriter(columns);
-//    var writer = csvWriter();
+//    var writer = csvWriter(columns);
     var booleanWriters = booleanWriters(byType, writer);
     var doubleWriters = doubleWriters(byType, writer);
     var idWriters = idWriters(byType, writer);
@@ -90,10 +90,10 @@ public final class SpansBench {
     return new ParquetWriter(parquetPath, config, columns.toArray(new Column[0]));
   }
 
-  private static CSVWriter csvWriter() throws IOException {
+  private static CSVWriter csvWriter(final List<Column> columns) throws IOException {
     var tempDir = Files.createTempDirectory(Path.of("."), "bench");
-    var csvPath = Files.createTempFile(tempDir, "csv", "");
-    return new CSVWriter(csvPath);
+    var csvPath = Files.createTempFile(tempDir, "csv", ".csv");
+    return new CSVWriter(csvPath, columns);
   }
 
   private static void strings(final StringByteReader[] stringReaders, final StringColumnWriter[] stringWriters) {
