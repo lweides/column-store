@@ -29,7 +29,27 @@ class ReadSupportImpl extends ReadSupport<Object> {
 
   @Override
   public ReadContext init(final InitContext context) {
-    readSchema = MessageTypeParser.parseMessageType(context.getConfiguration().get(PARQUET_READ_SCHEMA));
+    var configuredSchema = context.getConfiguration().get(PARQUET_READ_SCHEMA);
+    readSchema = configuredSchema == null ? context.getFileSchema() : MessageTypeParser.parseMessageType(configuredSchema);
+
+    for (var column : readSchema.getColumns()) {
+      var name = column.getPrimitiveType().getName();
+      switch (column.getPrimitiveType().getPrimitiveTypeName()) {
+        case INT64 -> readers.computeIfAbsent(name, n -> new LongReader());
+        case BOOLEAN -> readers.computeIfAbsent(name, n -> new BooleanReader());
+        case DOUBLE -> readers.computeIfAbsent(name, n -> new DoubleReader());
+        case BINARY -> {
+          boolean isString = name.endsWith("-string");
+          if (isString) {
+            readers.computeIfAbsent(name, n -> new StringReader());
+          } else {
+            readers.computeIfAbsent(name, n -> new IdReader());
+          }
+        }
+        default -> throw new IllegalStateException("Unknown type: " + column.getPrimitiveType());
+      }
+    }
+
     return new ReadContext(readSchema);
   }
 }
