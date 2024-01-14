@@ -138,6 +138,11 @@ public class ParquetReader implements Reader {
     }
 
     @Override
+    public Set<String> columnNames() {
+        return readers.keySet();
+    }
+
+    @Override
     public boolean hasNext() throws IOException {
         if (!consumed) {
             return hasNext;
