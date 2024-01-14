@@ -4,6 +4,7 @@ import column.store.api.column.*;
 import column.store.api.query.Query;
 
 import java.io.IOException;
+import java.util.Set;
 
 public interface Reader extends AutoCloseable {
 
@@ -45,6 +46,11 @@ public interface Reader extends AutoCloseable {
      * @throws NoSuchColumnException if the {@link StringColumn} was not selected ({@link Query#select(Column...)})
      */
     StringColumnReader of(StringColumn column);
+
+    /**
+     * @return a set of column names of all columns known to the reader in the form of Strings.
+     */
+    Set<String> columnNames();
 
     /**
      * Whether there exists a next record to be accessed.

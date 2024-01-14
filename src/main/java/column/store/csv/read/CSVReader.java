@@ -242,6 +242,11 @@ public class CSVReader implements Reader {
     }
 
     @Override
+    public Set<String> columnNames() {
+        return header.keySet();
+    }
+
+    @Override
     public boolean hasNext() {
         return numOfReadRecord < numOfStoredRecords || (csvParser != null && csvParser.iterator().hasNext());
     }

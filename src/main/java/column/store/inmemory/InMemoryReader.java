@@ -11,12 +11,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Reads all records into memory column by column.
@@ -240,6 +236,11 @@ public class InMemoryReader implements Reader {
             int length = buffer.clear().put(bytes, start(), Integer.BYTES).flip().getInt();
             return Integer.BYTES + length;
         }
+    }
+
+    @Override
+    public Set<String> columnNames() {
+        return readers.keySet().stream().map(Column::name).collect(Collectors.toSet());
     }
 
     @Override
