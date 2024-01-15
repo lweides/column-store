@@ -1,21 +1,20 @@
-package column.store.query;
+package column.store.query.span;
 
+import column.store.Utils;
 import column.store.api.column.*;
 import column.store.api.query.Query;
 import column.store.api.query.StringFilter;
 import column.store.api.read.Reader;
 import column.store.api.read.StringColumnReader;
-import column.store.util.BenchmarkUtil;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Arrays;
 
 import static column.store.api.query.Filter.whereString;
 
-public class FilterForStringOperations {
+public class FilterForSpanStringOperations {
 
     private static final StringColumn SPAN_KIND = Column.forString("span.kind-string");
     private static final StringColumn ENDPOINT_NAME = Column.forString("endpoint.name-string");
@@ -39,24 +38,21 @@ public class FilterForStringOperations {
 
     @State(Scope.Thread)
     public static class BenchState {
-        public Reader reader;
-        public Query query;
-        public StringColumn[] columns;
-        public Path source;
+        private Reader reader;
+        private Query query;
+        private StringColumn[] columns;
 
         @Param({"parquet", "csv"})
         private String readerType;
-        @Param({"spans", "logs"})
-        private String sourceType;
         @Param({"true", "false"})
         private boolean isStable;
         @Param({"1", "2", "3", "4"})
         private int numOfCols;
 
-        @Setup(Level.Iteration)
+        @Setup(Level.Trial)
         public void setup() {
-            reader = BenchmarkUtil.setupReader(readerType);
-            source = BenchmarkUtil.setupSource(readerType, sourceType, isStable);
+            reader = Utils.reader(readerType);
+            var source = Utils.data("spans", readerType, isStable);
 
             columns = Arrays.copyOfRange(STRING_COLUMNS, 0, numOfCols);
 
