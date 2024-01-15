@@ -1,4 +1,4 @@
-{dt.entity.process_group_instance-string: STRING, dt.source_entity-string: STRING,
-  event.type-string: STRING, payload: STRING, xyz-string: STRING, status-string: STRING,
-  dt.entity.host-string: STRING, log.source-string: STRING, loglevel-string: STRING,
-  host.name-string: STRING, ordinal-long: LONG, dt.entity.process_group-string: STRING}
+{dt_entity_process_group-string: STRING, payload: STRING, dt_entity_process_group_instance-string: STRING,
+ xyz-string: STRING, dt_entity_host-string: STRING, event_type-string: STRING, status-string: STRING,
+ dt_source_entity-string: STRING, loglevel-string: STRING, ordinal-long: LONG, host_name-string: STRING,
+ log_source-string: STRING}
