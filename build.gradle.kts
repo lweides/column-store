@@ -28,6 +28,7 @@ dependencies {
     implementation("org.apache.hadoop:hadoop-mapreduce:2.7.0")
     implementation("org.apache.hadoop:hadoop-mapreduce-client-core:3.3.6")
     implementation("com.globalmentor:hadoop-bare-naked-local-fs:0.1.0")
+    implementation("org.yaml:snakeyaml:2.2")
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
