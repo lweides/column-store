@@ -11,6 +11,7 @@ import java.util.*;
 
 public class CSVWriter implements Writer {
 
+    private static final Base64.Encoder BASE_64 = Base64.getEncoder();
 
     private List<String[]> recordsToWrite;
     private final Map<String, Integer> headers;
@@ -124,7 +125,7 @@ public class CSVWriter implements Writer {
         return new IdColumnWriter() {
             @Override
             public void write(final byte[] value) {
-                currentRecord[headers.get(column.name())] = prepareStringForWriting(new String(value, StandardCharsets.UTF_8));
+                currentRecord[headers.get(column.name())] = new String(BASE_64.encode(value), StandardCharsets.UTF_8);
             }
 
             @Override
