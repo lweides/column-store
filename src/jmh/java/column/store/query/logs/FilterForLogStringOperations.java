@@ -17,24 +17,24 @@ import static column.store.api.query.Filter.whereString;
 
 public class FilterForLogStringOperations {
 
-    private static final StringColumn SPAN_KIND = Column.forString("span.kind-string");
-    private static final StringColumn ENDPOINT_NAME = Column.forString("endpoint.name-string");
-    private static final StringColumn SERVLET_CONTEXT_NAME = Column.forString("servlet.context.name-string");
-    private static final StringColumn THREAD_NAME = Column.forString("thread.name-string");
+    private static final StringColumn PROCESS_GROUP = Column.forString("dt.entity.process_group_instance-string");
+    private static final StringColumn LOG_SOURCE = Column.forString("log.source-string");
+    private static final StringColumn PAYLOAD = Column.forString("payload");
+    private static final StringColumn HOST_NAME = Column.forString("host.name-string");
 
     private static final StringColumn[] STRING_COLUMNS = new StringColumn[] {
-            SPAN_KIND, ENDPOINT_NAME, SERVLET_CONTEXT_NAME, THREAD_NAME
+            PROCESS_GROUP, LOG_SOURCE, PAYLOAD, HOST_NAME
     };
 
 
-    private static final StringFilter IS_INTERNAL_SPANS = whereString(SPAN_KIND).is("internal");
-    private static final StringFilter CONTAINS_LOCALHOST_ENDPOINT = whereString(ENDPOINT_NAME).contains("localhost");
-    private static final StringFilter SERVLET_NAME_STARTS_WITH_EASYTRAVEL = whereString(ENDPOINT_NAME).startsWith("easyTravel");
-    private static final StringFilter THREAD_NAME_ENDS_WITH = whereString(ENDPOINT_NAME).endsWith("1172");
+    private static final StringFilter IS_INTERNAL_SPANS = whereString(PROCESS_GROUP).is("PROCESS_GROUP-05EBE2A2E58EAC94");
+    private static final StringFilter LOG_SOURCE_CONTAINS = whereString(LOG_SOURCE).contains("joh08775");
+    private static final StringFilter PAYLOAD_STARTS_WITH = whereString(PAYLOAD).startsWith("2024-01");
+    private static final StringFilter HOST_NAME_ENDS_WITH = whereString(HOST_NAME).endsWith("50006");
 
 
     private static final StringFilter[] STRING_FILTERS = new StringFilter[] {
-            IS_INTERNAL_SPANS, CONTAINS_LOCALHOST_ENDPOINT, SERVLET_NAME_STARTS_WITH_EASYTRAVEL, THREAD_NAME_ENDS_WITH
+            IS_INTERNAL_SPANS, LOG_SOURCE_CONTAINS, PAYLOAD_STARTS_WITH, HOST_NAME_ENDS_WITH
     };
 
     @State(Scope.Thread)

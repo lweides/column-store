@@ -28,8 +28,8 @@ public class FilterForSpanStringOperations {
 
     private static final StringFilter IS_INTERNAL_SPANS = whereString(SPAN_KIND).is("internal");
     private static final StringFilter CONTAINS_LOCALHOST_ENDPOINT = whereString(ENDPOINT_NAME).contains("localhost");
-    private static final StringFilter SERVLET_NAME_STARTS_WITH_EASYTRAVEL = whereString(ENDPOINT_NAME).startsWith("easyTravel");
-    private static final StringFilter THREAD_NAME_ENDS_WITH = whereString(ENDPOINT_NAME).endsWith("1172");
+    private static final StringFilter SERVLET_NAME_STARTS_WITH_EASYTRAVEL = whereString(SERVLET_CONTEXT_NAME).startsWith("easyTravel");
+    private static final StringFilter THREAD_NAME_ENDS_WITH = whereString(THREAD_NAME).endsWith("1172");
 
 
     private static final StringFilter[] STRING_FILTERS = new StringFilter[] {
