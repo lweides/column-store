@@ -21,7 +21,7 @@ public class CSVReaderTest {
     private Query.Builder queryBuilder;
     private static final Path CSVFILE_PATH = Path.of("src/test/resources/TLC_taxi.csv");
     private final DoubleColumn tripDistance = Column.forDouble("trip_distance");
-    private final IdColumn vendorId = Column.forId("VendorID");
+    private final StringColumn vendorId = Column.forString("VendorID");
     private final StringColumn pickupTime = Column.forString("tpep_pickup_datetime");
 
     @BeforeEach
@@ -81,7 +81,7 @@ public class CSVReaderTest {
 
         csvReader.query(query);
 
-        Queue<byte[]> resultRecords = new LinkedList<>();
+        Queue<String> resultRecords = new LinkedList<>();
 
         while (csvReader.hasNext()) {
             csvReader.next();
