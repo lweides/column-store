@@ -31,7 +31,6 @@ import column.store.api.column.BooleanColumn;
 import column.store.api.column.DoubleColumn;
 import column.store.api.column.IdColumn;
 import column.store.api.column.LongColumn;
-import column.store.api.column.NoSuchColumnException;
 import column.store.api.column.StringColumn;
 import column.store.api.query.BooleanFilter;
 import column.store.api.query.DoubleFilter;
@@ -48,6 +47,7 @@ import column.store.api.read.Reader;
 import column.store.api.read.StringColumnReader;
 import column.store.parquet.ParquetUtils;
 
+@SuppressWarnings("checkstyle:OperatorWrap")
 public class ParquetReader implements Reader {
 
     private final Map<String, BaseReader> readers = new HashMap<>();
@@ -58,23 +58,15 @@ public class ParquetReader implements Reader {
     private boolean consumed = true;
     private boolean hasNext;
 
-  public ParquetReader(final UnaryOperator<org.apache.parquet.hadoop.ParquetReader.Builder<Object>> config) {
-    this.config = config;
-  }
+    public ParquetReader(final UnaryOperator<org.apache.parquet.hadoop.ParquetReader.Builder<Object>> config) {
+        this.config = config;
+    }
 
-  @Override
+    @Override
     public void query(final Query query) throws IOException {
         // reset from a previous query
         readers.clear();
         close();
-
-        query.columns().forEach(column -> readers.put(column.name(), switch (column.type()) {
-            case BOOLEAN -> new BooleanReader();
-            case DOUBLE -> new DoubleReader();
-            case ID -> new IdReader();
-            case LONG -> new LongReader();
-            case STRING -> new StringReader();
-        }));
 
         var path = new Path(query.filePath().toUri());
         var builder = config.apply(builder(readSupport, path));
@@ -82,9 +74,11 @@ public class ParquetReader implements Reader {
         var conf = new Configuration();
         ParquetUtils.patchConfigForWindows(conf);
 
-        // only read columns from query
-        var schema = ParquetUtils.schemaFrom(StreamSupport.stream(query.columns().spliterator(), false));
-        conf.set(ReadSupport.PARQUET_READ_SCHEMA, schema);
+        if (!query.selectAll()) {
+            // set read schema to only read the requested columns
+            var schema = ParquetUtils.schemaFrom(StreamSupport.stream(query.columns().spliterator(), false));
+            conf.set(ReadSupport.PARQUET_READ_SCHEMA, schema);
+        }
 
         builder.withConf(conf);
 
@@ -99,37 +93,27 @@ public class ParquetReader implements Reader {
 
     @Override
     public BooleanColumnReader of(final BooleanColumn column) {
-        return Optional.ofNullable(readers.get(column.name()))
-                .map(BooleanColumnReader.class::cast)
-                .orElseThrow(() -> new NoSuchColumnException(column));
+        return (BooleanColumnReader) readers.computeIfAbsent(column.name(), n -> new BooleanReader());
     }
 
     @Override
     public DoubleColumnReader of(final DoubleColumn column) {
-        return Optional.ofNullable(readers.get(column.name()))
-                .map(DoubleColumnReader.class::cast)
-                .orElseThrow(() -> new NoSuchColumnException(column));
+        return (DoubleColumnReader) readers.computeIfAbsent(column.name(), n -> new DoubleReader());
     }
 
     @Override
     public IdColumnReader of(final IdColumn column) {
-        return Optional.ofNullable(readers.get(column.name()))
-                .map(IdColumnReader.class::cast)
-                .orElseThrow(() -> new NoSuchColumnException(column));
+        return (IdColumnReader) readers.computeIfAbsent(column.name(), n -> new IdReader());
     }
 
     @Override
     public LongColumnReader of(final LongColumn column) {
-        return Optional.ofNullable(readers.get(column.name()))
-                .map(LongColumnReader.class::cast)
-                .orElseThrow(() -> new NoSuchColumnException(column));
+        return (LongColumnReader) readers.computeIfAbsent(column.name(), n -> new LongReader());
     }
 
     @Override
     public StringColumnReader of(final StringColumn column) {
-        return Optional.ofNullable(readers.get(column.name()))
-                .map(StringColumnReader.class::cast)
-                .orElseThrow(() -> new NoSuchColumnException(column));
+        return (StringColumnReader) readers.computeIfAbsent(column.name(), n -> new StringReader());
     }
 
     @Override
