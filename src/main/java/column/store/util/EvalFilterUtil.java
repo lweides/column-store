@@ -3,9 +3,11 @@ package column.store.util;
 import column.store.api.query.*;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.Base64;
 
 public final class EvalFilterUtil {
+
+    private static final Base64.Encoder BASE_64 = Base64.getEncoder();
 
     private EvalFilterUtil() { }
 
@@ -27,7 +29,7 @@ public final class EvalFilterUtil {
                 }
             }
             case ID -> {
-                return evalIdFilter(columnValue.getBytes(StandardCharsets.UTF_8), (IdFilter) filter);
+                return evalIdFilter(columnValue, (IdFilter) filter);
             }
             case LONG -> {
                 try {
@@ -68,8 +70,8 @@ public final class EvalFilterUtil {
         }
     }
 
-    private static boolean evalIdFilter(final byte[] columnValue, final IdFilter filter) {
-        return Arrays.equals(filter.id(), columnValue);
+    private static boolean evalIdFilter(final String columnValue, final IdFilter filter) {
+        return new String(BASE_64.encode(filter.id()), StandardCharsets.UTF_8).equals(columnValue);
     }
 
     private static boolean evalLongFilter(final long columnValue, final LongFilter filter) {

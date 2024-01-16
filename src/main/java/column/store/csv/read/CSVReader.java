@@ -16,10 +16,13 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 
 public class CSVReader implements Reader {
+
+    private static final Base64.Decoder BASE_64 = Base64.getDecoder();
 
     // MEMORY-MAPPING SECTION
     private static final int ALLOCATED_MEMORY = 268_435_456; // ~ 256 MB
@@ -197,7 +200,8 @@ public class CSVReader implements Reader {
         return new IdColumnReader() {
             @Override
             public byte[] get() {
-                return getColumnValue(column).getBytes();
+                var encodedBytes = getColumnValue(column).getBytes(StandardCharsets.UTF_8);
+                return BASE_64.decode(encodedBytes);
             }
 
             @Override
