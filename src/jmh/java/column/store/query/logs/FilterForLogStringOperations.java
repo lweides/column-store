@@ -17,10 +17,10 @@ import static column.store.api.query.Filter.whereString;
 
 public class FilterForLogStringOperations {
 
-    private static final StringColumn PROCESS_GROUP = Column.forString("dt.entity.process_group_instance-string");
-    private static final StringColumn LOG_SOURCE = Column.forString("log.source-string");
+    private static final StringColumn PROCESS_GROUP = Column.forString("dt_entity_process_group_instance-string");
+    private static final StringColumn LOG_SOURCE = Column.forString("log_source-string");
     private static final StringColumn PAYLOAD = Column.forString("payload");
-    private static final StringColumn HOST_NAME = Column.forString("host.name-string");
+    private static final StringColumn HOST_NAME = Column.forString("host_name-string");
 
     private static final StringColumn[] STRING_COLUMNS = new StringColumn[] {
             PROCESS_GROUP, LOG_SOURCE, PAYLOAD, HOST_NAME
