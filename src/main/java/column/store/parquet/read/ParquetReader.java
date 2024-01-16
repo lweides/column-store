@@ -13,11 +13,7 @@ import static org.apache.parquet.hadoop.ParquetReader.builder;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.function.UnaryOperator;
 import java.util.stream.StreamSupport;
 
@@ -62,11 +58,11 @@ public class ParquetReader implements Reader {
     private boolean consumed = true;
     private boolean hasNext;
 
-  public ParquetReader(final UnaryOperator<org.apache.parquet.hadoop.ParquetReader.Builder<Object>> config) {
-    this.config = config;
-  }
+    public ParquetReader(final UnaryOperator<org.apache.parquet.hadoop.ParquetReader.Builder<Object>> config) {
+        this.config = config;
+    }
 
-  @Override
+    @Override
     public void query(final Query query) throws IOException {
         // reset from a previous query
         readers.clear();
@@ -79,9 +75,9 @@ public class ParquetReader implements Reader {
         ParquetUtils.patchConfigForWindows(conf);
 
         if (!query.selectAll()) {
-          // set read schema to only read the requested columns
-          var schema = ParquetUtils.schemaFrom(StreamSupport.stream(query.columns().spliterator(), false));
-          conf.set(ReadSupport.PARQUET_READ_SCHEMA, schema);
+            // set read schema to only read the requested columns
+            var schema = ParquetUtils.schemaFrom(StreamSupport.stream(query.columns().spliterator(), false));
+            conf.set(ReadSupport.PARQUET_READ_SCHEMA, schema);
         }
 
         builder.withConf(conf);
@@ -102,22 +98,27 @@ public class ParquetReader implements Reader {
 
     @Override
     public DoubleColumnReader of(final DoubleColumn column) {
-      return (DoubleColumnReader) readers.computeIfAbsent(column.name(), n -> new DoubleReader());
+        return (DoubleColumnReader) readers.computeIfAbsent(column.name(), n -> new DoubleReader());
     }
 
     @Override
     public IdColumnReader of(final IdColumn column) {
-      return (IdColumnReader) readers.computeIfAbsent(column.name(), n -> new IdReader());
+        return (IdColumnReader) readers.computeIfAbsent(column.name(), n -> new IdReader());
     }
 
     @Override
     public LongColumnReader of(final LongColumn column) {
-      return (LongColumnReader) readers.computeIfAbsent(column.name(), n -> new LongReader());
+        return (LongColumnReader) readers.computeIfAbsent(column.name(), n -> new LongReader());
     }
 
     @Override
     public StringColumnReader of(final StringColumn column) {
-      return (StringColumnReader) readers.computeIfAbsent(column.name(), n -> new StringReader());
+        return (StringColumnReader) readers.computeIfAbsent(column.name(), n -> new StringReader());
+    }
+
+    @Override
+    public Set<String> columnNames() {
+        return readers.keySet();
     }
 
     @Override
