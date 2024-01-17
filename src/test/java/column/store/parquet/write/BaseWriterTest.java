@@ -51,8 +51,6 @@ abstract class BaseWriterTest<W extends BaseWriter, V> {
 
     assertThat(writer.isPresent).isFalse();
 
-    verify(recordConsumer, times(1)).startField(any(), anyInt());
-    verify(recordConsumer, times(1)).endField(any(), anyInt());
     verifyNoMoreInteractions(recordConsumer);
   }
 

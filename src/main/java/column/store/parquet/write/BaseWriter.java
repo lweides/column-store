@@ -23,12 +23,12 @@ abstract class BaseWriter implements ColumnWriter {
   }
 
   void accept(final RecordConsumer recordConsumer) {
-    recordConsumer.startField(column.name(), field);
     if (isPresent) {
+      recordConsumer.startField(column.name(), field);
       add(recordConsumer);
       isPresent = false;
+      recordConsumer.endField(column.name(), field);
     }
-    recordConsumer.endField(column.name(), field);
   }
 
   protected abstract void add(RecordConsumer recordConsumer);
