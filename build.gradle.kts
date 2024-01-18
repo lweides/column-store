@@ -6,7 +6,7 @@ plugins {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
@@ -40,4 +40,12 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.compileJava {
+    options.compilerArgs.add("--enable-preview")
+}
+
+tasks.compileJmhJava {
+    options.compilerArgs.add("--enable-preview")
 }
