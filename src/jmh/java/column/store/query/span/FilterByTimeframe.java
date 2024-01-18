@@ -7,15 +7,12 @@ import java.nio.file.Path;
 
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Level;
-import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
 
 import column.store.Utils;
@@ -26,9 +23,6 @@ import column.store.api.query.Query;
 import column.store.api.read.Reader;
 
 @SuppressWarnings("checkstyle:MagicNumber")
-@Measurement(iterations = 3)
-@Warmup(iterations = 2)
-@Fork(1)
 public class FilterByTimeframe {
 
   private static final IdColumn SPAN_ID = Column.forId("span_id-id_64");
@@ -40,15 +34,15 @@ public class FilterByTimeframe {
 
     @Param({ "parquet", "csv" })
     private String readerType;
-    //    @Param({ "true", "false" })
-    private boolean isStable = true;
+    @Param({ "true", "false" })
+    private boolean isStable;
     private Reader reader;
     private Path data;
 
     @Setup(Level.Trial)
     public void setup() {
       reader = Utils.reader(readerType);
-      data = Utils.data("span", readerType, isStable);
+      data = Utils.data("spans", readerType, isStable);
     }
   }
 
@@ -58,7 +52,7 @@ public class FilterByTimeframe {
     var reader = state.reader;
     var builder = Query.from(state.data)
             .select(START_TIME, END_TIME, SPAN_ID);
-    var query = timeframe(builder, 1704363275983082000L, 1704370422468042000L);
+    var query = timeframe(builder, 1704357275983219000L, 1704367793166432512L);
     reader.query(query);
 
     var startTimes = reader.of(START_TIME);
@@ -86,7 +80,7 @@ public class FilterByTimeframe {
     var reader = state.reader;
     var builder = Query.from(state.data)
             .select(START_TIME, END_TIME, SPAN_ID);
-    var query = timeframe(builder, 1704363275983082000L, 1704370422468042000L);
+    var query = timeframe(builder, 1704357275983219000L, 1704363849222727424L);
     reader.query(query);
 
     var startTimes = reader.of(START_TIME);

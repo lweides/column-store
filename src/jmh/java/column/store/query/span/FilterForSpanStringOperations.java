@@ -18,7 +18,7 @@ public class FilterForSpanStringOperations {
 
     private static final StringColumn SPAN_KIND = Column.forString("span_kind-string");
     private static final StringColumn ENDPOINT_NAME = Column.forString("endpoint_name-string");
-    private static final StringColumn SERVLET_CONTEXT_NAME = Column.forString("servlet_context.name-string");
+    private static final StringColumn SERVLET_CONTEXT_NAME = Column.forString("servlet_context_name-string");
     private static final StringColumn THREAD_NAME = Column.forString("thread_name-string");
 
     private static final StringColumn[] STRING_COLUMNS = new StringColumn[] {

@@ -38,6 +38,10 @@ public final class ParquetUtils {
     if (isWindows()) {
       // workaround for windows, as hadoop does not work on windows fs
       configuration.setClass("fs.file.impl", BareLocalFileSystem.class, FileSystem.class);
+    } else {
+      // whatever this is: https://stackoverflow.com/questions/17265002/hadoop-no-filesystem-for-scheme-file
+      configuration.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
+      configuration.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
     }
   }
 
