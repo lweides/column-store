@@ -13,6 +13,7 @@ import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.TearDown;
 import org.openjdk.jmh.infra.Blackhole;
 
 import column.store.Utils;
@@ -41,6 +42,13 @@ public class FilterForSpanId {
     public void setup() {
       reader = Utils.reader(readerType);
       data = Utils.data("spans", readerType, isStable);
+    }
+
+    @TearDown(Level.Trial)
+    public void teardown() throws IOException {
+      if (reader != null) {
+        reader.close();
+      }
     }
   }
 

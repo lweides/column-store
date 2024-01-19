@@ -36,7 +36,7 @@ public class ReadAllSpanColumns {
         private boolean isStable;
 
 
-        @Setup(Level.Iteration)
+        @Setup(Level.Trial)
         public void setup() {
             reader = Utils.reader(readerType);
             source = Utils.data("spans", readerType, isStable);
@@ -91,6 +91,13 @@ public class ReadAllSpanColumns {
                 case "STRING" -> Column.forString(name);
                 default -> throw new IllegalArgumentException("Unsupported type: " + columnType);
             };
+        }
+
+        @TearDown(Level.Trial)
+        public void teardown() throws IOException {
+            if (reader != null) {
+                reader.close();
+            }
         }
     }
 
