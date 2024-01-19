@@ -29,6 +29,8 @@ public class CSVReader implements Reader {
     private int memoryThreshold = -1;
     private int memoryLeft = ALLOCATED_MEMORY;
     private MappedByteBuffer mmap;
+    private RandomAccessFile mmapFile;
+    private File mmapFilePath;
     private int offset = 0;
     private int numOfStoredRecords = 0;
     private int numOfReadRecord = 0;
@@ -61,7 +63,9 @@ public class CSVReader implements Reader {
         if (mmap != null) {
             mmap.clear();
         } else {
-            mmap = new RandomAccessFile(File.createTempFile("temp", ".dat"), "rw")
+            mmapFilePath = File.createTempFile("temp", ".dat");
+            mmapFile = new RandomAccessFile(mmapFilePath, "rw");
+            mmap = mmapFile
                     .getChannel()
                     .map(FileChannel.MapMode.READ_WRITE, 0, ALLOCATED_MEMORY);
         }
@@ -266,6 +270,12 @@ public class CSVReader implements Reader {
     public void close() throws IOException {
         if (csvParser != null) {
             csvParser.close();
+        }
+        if (mmapFile != null) {
+            mmapFile.close();
+        }
+        if (mmapFilePath != null) {
+            mmapFilePath.delete();
         }
     }
 }
