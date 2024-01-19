@@ -62,6 +62,13 @@ public class FilterForSpanStringOperations {
 
             query = queryBuilder.allOf();
         }
+
+        @TearDown(Level.Trial)
+        public void teardown() throws IOException {
+            if (reader != null) {
+                reader.close();
+            }
+        }
     }
 
     @Benchmark

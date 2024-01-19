@@ -63,6 +63,13 @@ public class FilterForLogStringOperations {
 
             query = queryBuilder.allOf();
         }
+
+        @TearDown(Level.Trial)
+        public void teardown() throws IOException {
+            if (reader != null) {
+                reader.close();
+            }
+        }
     }
 
     @Benchmark
